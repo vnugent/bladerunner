@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
 public class Main  {
 	private Logger log = LoggerFactory.getLogger(Main.class);
 	private KubernetesApiClient kubernetesClient ;
-	private String filterStrategy;
 	
 	public Main() throws SchedulerException {
 		String apiEndpoint = Utils.getEnvStrict("KUBERNETES_API_ENDPOINT");
@@ -30,27 +29,20 @@ public class Main  {
 	
 	public void preflightChecks() {
 		try {
+			log.info("Testing connectivity to the server...");
 			kubernetesClient.getAllPods();
 		} catch (KubernetesClientException e) {
 			throw new RuntimeException(e);
 		}
 	}
 	
-	public Main setFilterStrategy(String className) throws ClassNotFoundException {
-		filterStrategy = className;
-		return this;
-	}
-	
-	String getFilter() {
-		return this.filterStrategy;
-	}
 
 	public KubernetesApiClient api() {
 		return kubernetesClient;
 	}
 	
 	public void startCron() throws SchedulerException {
-		JobDetail jobDetail = JobBuilder.newJob(DefaultJob.class)
+		JobDetail jobDetail = JobBuilder.newJob(DefaultQuartzJob.class)
 			    .withIdentity("job1", "group1")
 			    .build();
 		
@@ -71,7 +63,6 @@ public class Main  {
     	try {
 			new Main();
 		} catch (SchedulerException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     }

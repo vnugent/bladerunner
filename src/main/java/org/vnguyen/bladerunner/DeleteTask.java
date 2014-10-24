@@ -18,37 +18,36 @@ public class DeleteTask {
 	private Logger log = LoggerFactory.getLogger(DeleteTask.class);
 
 	private Main mainContext;
-	private SimpleAgingFilter agingFilter; 
+	private AgingFilterAdapter olderThanFunc;
 	private ExecutorService executor = Executors.newFixedThreadPool(5);
-
+	private ServiceAdapter serviceAdapter = new ServiceAdapter();
+	private PodAdapter podAdapter = new PodAdapter();
 	
 	public DeleteTask(Main context) {
 		this.mainContext = context;
-		agingFilter = new SimpleAgingFilter(1, TimeUnit.DAYS);
-		log.info("Creating DeleteTask with Filter {}", agingFilter.toString());
+		olderThanFunc = new AgingFilterAdapter(new SimpleAgingFilter(3, TimeUnit.DAYS));
 	}
 	
 	public void delete() {
-			FilterAdapter olderThanFunc = new FilterAdapter(agingFilter);
-			List<Pod> podsToBeDeleted = new ArrayList<>();
-			List<Service> servicesToBeDeleted = new ArrayList<>();
-			
-			for(Pod pod : getAllPods()) {
-				log.info(pod.toString());
-				if (olderThanFunc.accepted(new PodAdapter(), pod)) {
-					podsToBeDeleted.add(pod);
-				}
+		List<Pod> podsToBeDeleted = new ArrayList<>();
+		List<Service> servicesToBeDeleted = new ArrayList<>();
+		
+		for(Pod pod : getAllPods()) {
+			log.info(pod.toString());
+			if (olderThanFunc.accepted(podAdapter, pod)) {
+				podsToBeDeleted.add(pod);
 			}
+		}
 			
-			for(Service service : getAllServices()) {
-				log.info(service.toString());
-				if (olderThanFunc.accepted(new ServiceAdapter(), service)) {
-					servicesToBeDeleted.add(service);
-				}				
-			}
+		for(Service service : getAllServices()) {
+			log.info(service.toString());
+			if (olderThanFunc.accepted(serviceAdapter, service)) {
+				servicesToBeDeleted.add(service);
+			}				
+		}
 			
-			deletePods(podsToBeDeleted);
-			deleteServices(servicesToBeDeleted);
+		deletePods(podsToBeDeleted);
+		deleteServices(servicesToBeDeleted);
 	}
 	
 	
@@ -78,6 +77,7 @@ public class DeleteTask {
 		return new Service[] {};	}
 	
 	private void deletePods(final List<Pod> list) {
+		log.info("*** Pods to be deleted: {} ***", list.size());
 		executor.submit(new Runnable() {
 			@Override
 			public void run() {
@@ -93,6 +93,7 @@ public class DeleteTask {
 	}
 	
 	private void deleteServices(final List<Service> list) {
+		log.info("*** Services to be deleted: {} ***", list.size());
 		executor.submit(new Runnable() {
 			@Override
 			public void run() {

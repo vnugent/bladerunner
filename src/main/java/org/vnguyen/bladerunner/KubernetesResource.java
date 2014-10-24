@@ -1,5 +1,8 @@
 package org.vnguyen.bladerunner;
 
+/**
+ * A simplified view of a Kubernetes object
+ */
 public class KubernetesResource {
 	final String id;
 	final String type;

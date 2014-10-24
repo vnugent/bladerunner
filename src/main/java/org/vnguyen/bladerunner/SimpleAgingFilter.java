@@ -2,6 +2,10 @@ package org.vnguyen.bladerunner;
 
 import java.util.concurrent.TimeUnit;
 
+/**
+ * <p>This filter defines the amount of time a resource is allowed to live inclusively</p>
+ * {@code SimpleAgingFilter threeDays = new SimpleAgingFilter(3, TimeUnit.DAYS);}
+ */
 public class SimpleAgingFilter {
 	private long expiration;
 	private TimeUnit expirationTimeUnit;

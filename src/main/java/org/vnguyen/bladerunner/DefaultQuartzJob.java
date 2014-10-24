@@ -7,8 +7,8 @@ import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DefaultJob implements Job {
-	private Logger log = LoggerFactory.getLogger(DefaultJob.class);
+public class DefaultQuartzJob implements Job {
+	private Logger log = LoggerFactory.getLogger(DefaultQuartzJob.class);
 
 	@Override
 	public void execute(JobExecutionContext jobCtx) throws JobExecutionException {

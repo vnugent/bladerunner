@@ -7,13 +7,17 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FilterAdapter {
-	private Logger log = LoggerFactory.getLogger(FilterAdapter.class);
+/**
+ * Determine whether a Kubernetes object meets the aging filter requirement 
+ */
+public class AgingFilterAdapter {
+	private Logger log = LoggerFactory.getLogger(AgingFilterAdapter.class);
 
 	private SimpleAgingFilter filter;
 	
-	public FilterAdapter(SimpleAgingFilter filter) {
+	public AgingFilterAdapter(SimpleAgingFilter filter) {
 		this.filter = filter;
+		log.info("New filter adapter {}", filter.toString());
 	}
 	
 	public <T> boolean accepted(Adapter<T> adapter, T resource) {

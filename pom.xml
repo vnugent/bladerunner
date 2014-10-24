@@ -12,6 +12,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.final.single.jar>bladerunner</project.final.single.jar>
   </properties>
 
   <dependencies>
@@ -44,6 +45,14 @@
   </dependencies>
 	<build>
 	   	<plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.2</version>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+            </plugin>        
 	        <plugin>
 			  <artifactId>maven-assembly-plugin</artifactId>
 			  <version>2.4.1</version>
@@ -57,7 +66,9 @@
 	             		<mainClass>org.vnguyen.bladerunner.Main</mainClass>
 		            </manifest>
 		        </archive>
-		        <finalName>bladerunner-jar-with-dependencies</finalName>
+		        <finalName>${project.final.single.jar}</finalName>
+                <appendAssemblyId>false</appendAssemblyId>
+                <attach>false</attach>
 			  </configuration>
 			  <executions>
 			    <execution>
@@ -69,6 +80,23 @@
 			    </execution>
 			  </executions>
 			</plugin>	
+            <plugin>
+            <groupId>com.spotify</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>0.0.21</version>
+                <configuration>
+                    <baseImage>vnguyen/fedora-java:openjdk-7-jdk</baseImage>
+                    <imageName>vnguyen/bladerunner</imageName>
+                    <cmd>["java", "-jar", "/opt/${project.final.single.jar}.jar"]</cmd>
+                    <resources>
+                        <resource>
+                            <targetPath>/opt</targetPath>
+                            <directory>${project.build.directory}</directory>
+                            <include>${project.final.single.jar}.jar</include>
+                        </resource>
+                    </resources>
+                </configuration>
+             </plugin>            
 		</plugins>
 	</build>  
 </project>
